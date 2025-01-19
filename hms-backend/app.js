@@ -4,7 +4,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import connectDB from "./database/dbConnect.js";
-import messageRouter from "./router/router.js";
+import messageRouter from "./router/messageRouter.js";
+import userRouter from "./router/userRouter.js";
+import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 
 const app=express();
 config({path: "./config/config.env"});
@@ -25,7 +27,9 @@ app.use(fileUpload({
     tempFileDir: "/tmp/",
 }));
 app.use("/hms/message", messageRouter);
+app.use("/hms/user", userRouter);
 
 connectDB();
 
+app.use(errorMiddleware);
 export default app;
