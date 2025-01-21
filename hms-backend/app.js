@@ -7,6 +7,7 @@ import connectDB from "./database/dbConnect.js";
 import messageRouter from "./router/messageRouter.js";
 import userRouter from "./router/userRouter.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
+import appointmentRouter from "./router/appointmentRouter.js";
 
 const app=express();
 config({path: "./config/config.env"});
@@ -28,6 +29,7 @@ app.use(fileUpload({
 }));
 app.use("/hms/message", messageRouter);
 app.use("/hms/user", userRouter);
+app.use("/hms/appointment", appointmentRouter);
 
 connectDB();
 

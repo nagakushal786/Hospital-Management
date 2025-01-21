@@ -135,13 +135,13 @@ export const addNewDoctor=async (req, res, next)=> {
     }
 
     const {docAvatar}=req.files;
-    const allowedFormats=["/image/png", "/image/jpeg", "/image/jpg", "/image/webp"];
+    const allowedFormats=["image/png", "image/jpeg", "image/jpg", "image/webp"];
     if(!allowedFormats.includes(docAvatar.mimetype)){
         return next(new ErrorHandler("File format not supported", 400));
     }
 
-    const {firstName, lastName, email, phone, dob, gender, password, doctorDepartment, timings}=req.body;
-    if(!firstName || !lastName || !email || !phone || !dob || !gender || !password || !doctorDepartment || !timings){
+    const {firstName, lastName, email, phone, aadhar, dob, gender, password, doctorDepartment, timings, dayDoctorAvailable}=req.body;
+    if(!firstName || !lastName || !email || !phone || !aadhar || !dob || !gender || !password || !doctorDepartment || !timings || !dayDoctorAvailable){
         return next(new ErrorHandler("Please fill all the required details", 400));
     }
 
@@ -150,6 +150,21 @@ export const addNewDoctor=async (req, res, next)=> {
         return next(new ErrorHandler("Doctor with this email already exists", 400));
     }
 
-    const cloudinaryResponse=await cloudinary.UploadStream.upload(docAvatar.tempFilePath);
-    
+    const cloudinaryResponse=await cloudinary.uploader.upload(docAvatar.tempFilePath);
+    if(!cloudinaryResponse || cloudinaryResponse.error){
+        console.error("Cloudinary error:", cloudinaryResponse.error || "Unknown cloudinary error");
+    }  
+
+    const doctor=await userModel.create({firstName, lastName, email, phone, aadhar, dob, gender, password, doctorDepartment, timings, dayDoctorAvailable, role: "Doctor",
+        docAvatar: {
+            public_id: cloudinaryResponse.public_id,
+            url: cloudinaryResponse.secure_url
+        }
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: "New Doctor registered",
+        doctor
+    });
 }

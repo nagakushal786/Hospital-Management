@@ -14,3 +14,12 @@ export const sendMessage=async (req, res, next)=> {
         message: "Message sent successfully"
     });
 }
+
+export const getAllMessages=async (req, res, next)=> {
+    const messages=await messageModel.find();
+
+    return res.status(200).json({
+        success: true,
+        messages
+    });
+}
