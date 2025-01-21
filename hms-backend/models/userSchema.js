@@ -57,6 +57,38 @@ const userSchema=new mongoose.Schema({
     docAvatar: {
         public_id: String,
         url: String
+    },
+    timings: {
+        type: [
+            {
+                day: {
+                    type: String,
+                    required: true,
+                    enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                },
+                from: {
+                    type: String,
+                    required: true,
+                    validate: {
+                        validator: function(value){
+                            return /^\d{2}:\d{2}$/.test(value);
+                        },
+                        message: "Time should be in HH:mm format"
+                    }
+                },
+                to: {
+                    type: String,
+                    required: true,
+                    validate: {
+                        validator: function(value){
+                            return /^\d{2}:\d{2}$/.test(value);
+                        },
+                        message: "Time should be in HH:mm format"
+                    }
+                }
+            }
+        ],
+        required: true
     }
 });
 
